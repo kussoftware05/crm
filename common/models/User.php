@@ -13,6 +13,8 @@ use backend\exceptions\ModelValidationException;
  *
  * @property integer $id
  * @property string $username
+ * @property string $first_name
+ * @property string $last_name
  * @property string $password_hash
  * @property string $password_reset_token
  * @property string $verification_token
@@ -59,6 +61,7 @@ class User extends ActiveRecord implements IdentityInterface
             [['username'], 'unique'],
             ['status', 'default', 'value' => self::STATUS_INACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_INACTIVE, self::STATUS_DELETED]],
+            [['first_name', 'last_name'] , 'safe']
         ];
     }
 
@@ -68,7 +71,9 @@ class User extends ActiveRecord implements IdentityInterface
     public function attributeLabels()
     {
         return [
-           'password_hash' => 'Password'
+           'password_hash' => 'Password',
+           'first_name' => 'First Name',
+           'last_name' => 'Last Name',
         ];
     }
 
@@ -255,5 +260,30 @@ class User extends ActiveRecord implements IdentityInterface
         $this->setPassword($password);
         $this->insert(false);
         return $this;
+    }
+
+    /**
+     * get user full name
+     */
+    public function getUserFullName()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    /**
+     * get all user with names
+     * @return array 
+     */
+    public static function getAllUserWithNames()
+    {
+        $users = self::find()->all();
+        $name_with_pk = [];
+        if(empty($users))
+            return $name_with_pk;
+        foreach($users as $user)
+        {
+            $name_with_pk[$user->id] = $user->getUserFullName();
+        }
+        return $name_with_pk;
     }
 }
