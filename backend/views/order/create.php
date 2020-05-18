@@ -1,6 +1,9 @@
 <?php
 
 use yii\helpers\Html;
+use backend\assets\OrderAsset;
+
+OrderAsset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model backend\models\Order */
@@ -17,7 +20,8 @@ $this->params['breadcrumbs'][] = $this->title;
         'shipping_model' => $shipping_model,
         'billing_model' => $billing_model,
         'order_model' => $order_model,
-        'customer_list' => $customer_list
+        'customer_list' => $customer_list,
+        'product_list'  => $product_list
     ]) ?>
 
 </div>

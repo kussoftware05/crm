@@ -29,8 +29,8 @@ class m200515_062204_order_master extends Migration
             'user_id',
             'user',
             'id',
-            'NO ACTION',
-            'NO ACTION'
+            'CASCADE', 
+            'CASCADE'
         );
 
         $this->addForeignKey(
@@ -39,8 +39,8 @@ class m200515_062204_order_master extends Migration
             'billing_id',
             'billing_master',
             'id',
-            'NO ACTION',
-            'NO ACTION'
+            'CASCADE',
+            'CASCADE'
         );
 
         $this->addForeignKey(
@@ -49,8 +49,8 @@ class m200515_062204_order_master extends Migration
             'shipping_id',
             'shipping_master',
             'id',
-            'NO ACTION',
-            'NO ACTION'
+            'CASCADE',
+            'CASCADE'
         );
 
         $this->createIndex(

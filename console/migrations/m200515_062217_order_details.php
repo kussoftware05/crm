@@ -25,8 +25,8 @@ class m200515_062217_order_details extends Migration
             'order_id',
             'order_master',
             'id',
-            'NO ACTION',
-            'NO ACTION'
+            'CASCADE',
+            'CASCADE'
         );
 
         $this->addForeignKey(
@@ -35,8 +35,8 @@ class m200515_062217_order_details extends Migration
             'product_id',
             'product',
             'id',
-            'NO ACTION',
-            'NO ACTION'
+            'CASCADE',
+            'CASCADE'
         );
 
         $this->addForeignKey(
@@ -45,8 +45,8 @@ class m200515_062217_order_details extends Migration
             'user_id',
             'user',
             'id',
-            'NO ACTION',
-            'NO ACTION'
+            'CASCADE',
+            'CASCADE'
         );
     }
 

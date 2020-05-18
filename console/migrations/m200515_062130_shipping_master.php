@@ -30,8 +30,8 @@ class m200515_062130_shipping_master extends Migration
             'user_id',
             'user',
             'id',
-            'NO ACTION',
-            'NO ACTION'
+            'CASCADE',
+            'CASCADE'
         );
     }
 

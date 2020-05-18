@@ -4,6 +4,7 @@ namespace backend\models;
 
 use Yii;
 use backend\models\Image;
+use yii\helpers\ArrayHelper;
 use backend\models\interfaces\ImageInterface;
 
 /**
@@ -95,6 +96,7 @@ class Product extends \yii\db\ActiveRecord implements ImageInterface
 
     /**
      * create a new product
+     * 
      * @param array $data
      * @param array $file
      */
@@ -135,7 +137,16 @@ class Product extends \yii\db\ActiveRecord implements ImageInterface
         if(isset($file['name']) && !empty($file['name']))
         {
             $image = new Image;
-            $image->createOrUploadAnImage($product->image_id, self::TYPE, $file, self::uploadImagePath());
+            $image_id = $product->image_id;
+            if(is_null($image_id) || empty($image_id))
+            {
+                $image_upload_id = $image->createOrUploadAnImage(null,self::TYPE, $file,self::uploadImagePath());
+                $current_model = self::findOne($id);
+                $current_model->image_id = (int)$image_upload_id;
+                return $current_model->save();
+            }
+            else 
+                $image->createOrUploadAnImage($product->image_id, self::TYPE, $file, self::uploadImagePath());
         }
         return true;
     }
@@ -143,6 +154,7 @@ class Product extends \yii\db\ActiveRecord implements ImageInterface
 
     /**
      * get product image
+     * 
      * @param int $id
      * @return string 
      */
@@ -156,6 +168,7 @@ class Product extends \yii\db\ActiveRecord implements ImageInterface
 
     /**
      * return image full path 
+     * 
      * @param int $id
      * @return string
      */
@@ -167,9 +180,43 @@ class Product extends \yii\db\ActiveRecord implements ImageInterface
 
     /**
      * product upload image path
+     * 
+     * @return string
      */
     public static function uploadImagePath()
     {
         return Yii::getAlias('@webroot') . '/uploads/' . strtolower(self::TYPE);
+    }
+
+    /**
+     * get all product with pk and name
+     * 
+     * @return array
+     */
+    public static function getAllProductNameWithPrice()
+    {
+        $products = self::find()->asArray()->all();
+        if(empty($products))
+            return [];
+        else 
+            return ArrayHelper::map($products, 'id', 'name');
+    }
+
+    /**
+     * get product price by product pk
+     * 
+     * @param int $id
+     * @return string
+     */
+    public static function getPriceById($id)
+    {
+        $product = self::find()
+            ->where(['id' => $id])
+            ->one();
+        
+        if(!is_null($product->sell_price) && (int)$product->sell_price > 0 )
+            return $product->sell_price;
+        else
+            return $product->price;
     }
 }

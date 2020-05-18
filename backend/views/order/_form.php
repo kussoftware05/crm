@@ -46,22 +46,42 @@ use yii\widgets\ActiveForm;
 
                     <div class="col-sm-4 col-md-4">
                         <h5>Shipping Details</h5>
-                        <?= $form->field($shipping_model, 'first_name')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($shipping_model, 'last_name')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($shipping_model, 'company_name')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($shipping_model, 'address_line_1')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($shipping_model, 'address_line_2')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($shipping_model, 'city')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($shipping_model, 'zipcode')->textInput(['maxlength' => true]) ?>
-                        <?= $form->field($shipping_model, 'email')->textInput(['maxlength' => true]) ?>
+                        <div>
+                            <input type="checkbox" id="s_same_as_b" name="shipping_same_as_billing" value="1">
+                            <label for="shipping-confarmation">Shipping same as billing</label>
+                        </div>
+                        <div id="shipping-details">
+                            <?= $form->field($shipping_model, 'first_name')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($shipping_model, 'last_name')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($shipping_model, 'company_name')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($shipping_model, 'address_line_1')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($shipping_model, 'address_line_2')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($shipping_model, 'city')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($shipping_model, 'zipcode')->textInput(['maxlength' => true]) ?>
+                            <?= $form->field($shipping_model, 'email')->textInput(['maxlength' => true]) ?>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
             <div class="col-sm-4">
+                <h5>Products</h5>
+                <div class="product-container">
 
-
+                    <?php if(!empty($product_list)) : ?>
+                    
+                    <?php foreach($product_list as $key => $name ) : ?>
+                        <div>
+                            <input type="checkbox" name="productlist[]" value="<?= $key ?>">
+                            <label for="id-<?= $key ?>"><?= $name ?></label>
+                        </div>
+                    <?php endforeach ?>
+                    
+                    <?php else:  ?>
+                        <?= 'currently no product in the system.' ?>
+                    <?php endif ?>
+                </div>
             </div>
     
         </div>

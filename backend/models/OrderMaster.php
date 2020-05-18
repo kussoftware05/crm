@@ -4,6 +4,10 @@ namespace backend\models;
 
 use Yii;
 use common\models\User;
+use backend\models\BillingMaster;
+use backend\models\ShippingMaster;
+use backend\models\OrderDetails;
+use backend\models\Product;
 /**
  * This is the model class for table "order_master".
  *
@@ -106,5 +110,50 @@ class OrderMaster extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    /**
+     * create a new order
+     * 
+     * @param array $post_data
+     */
+    public function createNewOrder($post_data, $product_list)
+    {
+        $billing_model = new BillingMaster;
+        $shipping_model = new ShippingMaster;
+
+        if($billing_model->load($post_data))
+            $billing_model->insert();
+        
+        if($shipping_model->load($post_data))
+            $shipping_model->insert();
+    
+        if($this->load($post_data))
+        {
+            $this->billing_id = $billing_model->id;
+            $this->shipping_id = $shipping_model->id;
+            $this->order_amount = 100;
+            $this->order_discount = 10;
+            $this->shipping_cost = 12.50;
+            $this->tax = 0.00;
+            $this->insert();
+
+            $billing_model->user_id = $this->user_id;
+            $shipping_model->user_id = $this->user_id;
+            $billing_model->update(false);
+            $shipping_model->update(false);
+        }
+        
+        foreach($post_data['productlist'] as $product_id)
+        {
+            $order_details = new OrderDetails;
+            $order_details->order_id = $this->id;
+            $order_details->product_id = $product_id;
+            $order_details->user_id = $this->user_id;
+            $order_details->price = Product::getPriceById($product_id);
+            $order_details->quantity = 1;
+            $order_details->save();
+        }
+        return true;
     }
 }
