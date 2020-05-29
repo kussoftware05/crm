@@ -100,13 +100,20 @@ class OrderController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $shipping_model = ShippingMaster::findOne($model->shipping_id);
+        $billing_model = BillingMaster::findOne($model->billing_id);
+        $order_model = $model;
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('update', [
-            'model' => $model,
+            'shipping_model' => $shipping_model,
+            'billing_model' => $billing_model,
+            'order_model'   => $order_model,
+            'customer_list' => User::getAllUserWithNames(),
+            'product_list' => Product::getAllProductNameWithPrice()
         ]);
     }
 
