@@ -132,28 +132,30 @@ class OrderMaster extends \yii\db\ActiveRecord
         {
             $this->billing_id = $billing_model->id;
             $this->shipping_id = $shipping_model->id;
-            $this->order_amount = 100;
-            $this->order_discount = 10;
-            $this->shipping_cost = 12.50;
+            $this->order_discount = 0.00;
+            $this->shipping_cost = 0.00;
             $this->tax = 0.00;
             $this->insert();
-
             $billing_model->user_id = $this->user_id;
             $shipping_model->user_id = $this->user_id;
             $billing_model->update(false);
             $shipping_model->update(false);
         }
-        
+        $total_order_amout = 0;
         foreach($post_data['productlist'] as $product_id)
         {
             $order_details = new OrderDetails;
+            $price = Product::getPriceById($product_id);
             $order_details->order_id = $this->id;
             $order_details->product_id = $product_id;
             $order_details->user_id = $this->user_id;
-            $order_details->price = Product::getPriceById($product_id);
+            $order_details->price = $price;
             $order_details->quantity = 1;
             $order_details->save();
+            $total_order_amout += $price;
         }
+        $this->order_amount = $total_order_amout;
+        $this->update(false);
         return true;
     }
 }

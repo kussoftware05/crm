@@ -6,13 +6,13 @@ use backend\assets\OrderAsset;
 OrderAsset::register($this);
 
 /* @var $this yii\web\View */
-/* @var $model backend\models\Order */
+/* @var $model backend\models\OrderMaster */
 
 $this->title = 'Create Order';
-$this->params['breadcrumbs'][] = ['label' => 'Orders', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Order', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="Order-create">
+<div class="order-master-create">
 
     <h4><?= Html::encode($this->title) ?></h4>
 

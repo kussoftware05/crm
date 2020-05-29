@@ -8,17 +8,63 @@ use backend\models\BillingMaster;
 use backend\models\OrderMaster;
 use backend\models\Product;
 use common\models\User;
+use backend\models\OrderMasterSearch;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
-
-class OrderController extends \yii\web\Controller
+/**
+ * OrderController implements the CRUD actions for OrderMaster model.
+ */
+class OrderController extends Controller
 {
-    public function actionIndex()
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
     {
-        return $this->render('index');
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
     }
 
     /**
-     * create a new order
+     * Lists all OrderMaster models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new OrderMasterSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single OrderMaster model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
+    }
+
+    /**
+     * Creates a new OrderMaster model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
      */
     public function actionCreate()
     {
@@ -28,19 +74,13 @@ class OrderController extends \yii\web\Controller
 
         if(Yii::$app->request->isPost)
         {
-            // echo '<pre>';
-            // print_r(Yii::$app->request->post());
-            // echo '</pre>';
-
-            // $billing_details = Yii::$app->request->post('BillingMaster');
-            // $shipping_details = Yii::$app->request->post('ShippingMaster');
-            // $order_details = Yii::$app->request->post('OrderMaster');
             $product_list = Yii::$app->request->post('productlist');
-
             if($order_model->createNewOrder(Yii::$app->request->post(),$product_list))
-                echo 'order finished';
+                return $this->redirect('index');
+            else
+                return $this->redirect('index');
         }
-
+        
         return $this->render('create', [
             'shipping_model' => $shipping_model,
             'billing_model' => $billing_model,
@@ -50,11 +90,53 @@ class OrderController extends \yii\web\Controller
         ]);
     }
 
-    public function actionTest()
+    /**
+     * Updates an existing OrderMaster model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
     {
-        echo '<pre>';
-        print_r(Product::getAllProductNameWithPrice()); 
-        echo '</pre>';
+        $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
     }
 
+    /**
+     * Deletes an existing OrderMaster model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the OrderMaster model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return OrderMaster the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = OrderMaster::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
+    }
 }
